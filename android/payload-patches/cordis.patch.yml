@@ -1,0 +1,31 @@
+# Default profile patch for the Android build.
+#
+# Android is not a sandbox host: there is no Landlock, no seccomp runner, and
+# no confining bash executor that dsh-sandbox-local can drive. The sandbox
+# chain therefore has to come out as a unit -- and because dsh-permission-presets
+# refuses to compose over an unconfined executor, it comes out too. What
+# remains is the unconfined bash executor, which is the honest description of
+# what a process can do inside the app's own private data directory.
+#
+# The app already runs with only its own Android app-sandbox authority: the
+# OS confines it to its uid and its files dir, so the harness executing
+# unconfined *within that* cannot reach other apps' data.
+
+- id: sandbox
+  disabled: true
+- id: sandbox-policy
+  disabled: true
+- id: bash-sandbox
+  disabled: true
+- id: pwsh-sandbox
+  disabled: true
+- id: fs-sandbox
+  disabled: true
+- id: permission
+  disabled: true
+
+- insert:
+    - id: bash-local
+      name: '@deepseek-ai/dsh-bash-local'
+      config:
+        timeoutMs: 60000

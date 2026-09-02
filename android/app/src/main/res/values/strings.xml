@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DeepSeek Harness</string>
+    <string name="status_preparing">Preparing…</string>
+    <string name="status_starting">Starting the harness…</string>
+    <string name="status_starting_seconds">Starting the harness… %1$ds</string>
+    <string name="status_install_failed">Could not install the runtime. See the log below.</string>
+    <string name="status_timeout">The harness did not start in time. See the log below.</string>
+    <string name="action_retry">Retry</string>
+</resources>
