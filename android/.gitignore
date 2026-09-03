@@ -1,0 +1,11 @@
+# Build outputs
+build/
+.gradle/
+local.properties
+
+# Generated payload (produced by scripts/prepare-payload.sh; ~40 MB)
+app/src/main/assets/payload.zip
+app/src/main/assets/payload.version
+
+# Downloaded Node-for-Android binary
+app/src/main/jniLibs/

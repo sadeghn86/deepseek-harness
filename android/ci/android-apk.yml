@@ -1,0 +1,137 @@
+name: Android APK
+
+# Builds an installable APK that runs the harness on-device: a bundled
+# Node-for-Android binary executes `dsh web` against a payload unpacked from
+# assets, and a WebView shows the local UI.
+#
+# The sandbox here is the CI runner, not the phone: everything the build
+# needs (JDK, Android SDK, npm registry, the Node-for-Android release) is
+# reachable from GitHub-hosted runners.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dsh_version:
+        description: 'npm version or dist-tag of @deepseek-ai/dsh to bundle'
+        required: false
+        default: 'alpha'
+      make_release:
+        description: 'Publish the APK as a GitHub prerelease'
+        type: boolean
+        required: false
+        default: true
+  push:
+    branches:
+      - 'arena/**'
+    paths:
+      - 'android/**'
+      - '.github/workflows/android-apk.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('android/**/*.gradle.kts', 'android/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: gradle-${{ runner.os }}-
+
+      - name: Fetch Node-for-Android
+        run: ./scripts/fetch-node.sh
+        working-directory: android
+
+      - name: Build the runtime payload
+        run: ./scripts/prepare-payload.sh "${{ inputs.dsh_version || 'alpha' }}"
+        working-directory: android
+
+      - name: Report payload size
+        run: |
+          ls -lh app/src/main/assets/
+          ls -lh app/src/main/jniLibs/arm64-v8a/
+        working-directory: android
+
+      # The repo ships no gradle-wrapper.jar (binaries do not belong in the
+      # tree), so generate the wrapper from the runner's Gradle, pinned to the
+      # version in gradle-wrapper.properties.
+      - name: Generate the Gradle wrapper
+        run: gradle wrapper --gradle-version 8.7
+        working-directory: android
+
+      - name: Build the debug APK
+        run: ./gradlew --no-daemon assembleDebug
+        working-directory: android
+
+      - name: Build the release APK
+        run: ./gradlew --no-daemon assembleRelease
+        working-directory: android
+
+      - name: Collect the APKs
+        id: collect
+        run: |
+          mkdir -p dist
+          cp android/app/build/outputs/apk/debug/*.apk dist/deepseek-harness-debug.apk
+          cp android/app/build/outputs/apk/release/*.apk dist/deepseek-harness-release.apk
+          ls -lh dist/
+          {
+            echo "sha_debug=$(sha256sum dist/deepseek-harness-debug.apk | cut -d' ' -f1)"
+            echo "sha_release=$(sha256sum dist/deepseek-harness-release.apk | cut -d' ' -f1)"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Upload the APKs as artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: deepseek-harness-apk
+          path: dist/*.apk
+          retention-days: 30
+          if-no-files-found: error
+
+      - name: Publish a prerelease
+        if: ${{ inputs.make_release != false }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="android-$(date -u +%Y%m%d-%H%M%S)"
+          gh release create "$TAG" dist/*.apk \
+            --title "DeepSeek Harness Android ($TAG)" \
+            --prerelease \
+            --notes "$(cat <<EOF
+          On-device build of the DeepSeek Harness web UI.
+
+          - Bundled dsh: \`${{ inputs.dsh_version || 'alpha' }}\`
+          - ABI: arm64-v8a only
+          - Install \`deepseek-harness-release.apk\` (side-loading must be enabled)
+
+          SHA-256
+          - debug: \`${{ steps.collect.outputs.sha_debug }}\`
+          - release: \`${{ steps.collect.outputs.sha_release }}\`
+
+          The release APK is signed with the Android debug key, so it is for
+          personal side-loading only and cannot be published to a store.
+          EOF
+          )"
