@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- یک ردیف جدول اعضا. وزن ستون‌ها باید با سرستون‌ها در activity_main یکی باشد. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingHorizontal="8dp"
+    android:paddingVertical="9dp">
+
+    <TextView
+        android:id="@+id/cellName"
+        style="@style/TableCell"
+        android:layout_weight="26"
+        android:textStyle="bold"
+        tools:text="علی رضایی" />
+
+    <TextView
+        android:id="@+id/cellPhone"
+        style="@style/TableCell"
+        android:layout_weight="24"
+        tools:text="۰۹۱۲۱۲۳۴۵۶۷" />
+
+    <TextView
+        android:id="@+id/cellEnd"
+        style="@style/TableCell"
+        android:layout_weight="24"
+        tools:text="۱۴۰۵/۰۷/۱۴" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="28"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/cellStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_badge"
+            android:gravity="center"
+            android:maxLines="2"
+            android:paddingHorizontal="4dp"
+            android:paddingVertical="4dp"
+            android:textColor="@android:color/white"
+            android:textSize="10sp"
+            tools:text="۷ روز مانده" />
+
+        <TextView
+            android:id="@+id/cellPlan"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="?android:attr/textColorSecondary"
+            android:textSize="10sp"
+            tools:text="ماهانه" />
+    </LinearLayout>
+
+</LinearLayout>

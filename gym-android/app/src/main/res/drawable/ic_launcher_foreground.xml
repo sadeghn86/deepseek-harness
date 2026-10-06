@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <!-- دمبل ساده، در ناحیهٔ امن ۷۲dp مرکزی آیکون تطبیقی -->
+    <path android:fillColor="#FFFFFFFF"
+        android:pathData="M24,40 h7 v28 h-7 z M31,46 h6 v16 h-6 z M37,50 h34 v8 h-34 z M71,46 h6 v16 h-6 z M77,40 h7 v28 h-7 z" />
+</vector>

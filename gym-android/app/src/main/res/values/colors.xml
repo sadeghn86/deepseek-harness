@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="status_active">#1B7F4B</color>
+    <color name="status_soon">#B26A00</color>
+    <color name="status_expired">#C62828</color>
+
+    <color name="card_bg">#FFFFFFFF</color>
+    <color name="card_stroke">#22000000</color>
+    <color name="banner_bg">#1F1B7F4B</color>
+    <color name="table_header_bg">#14000000</color>
+    <color name="table_stroke">#22000000</color>
+    <color name="field_stroke">#33000000</color>
+
+    <color name="ic_launcher_background">#0F766E</color>
+</resources>

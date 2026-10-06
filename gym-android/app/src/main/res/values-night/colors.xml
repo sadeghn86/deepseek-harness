@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="card_bg">#FF242424</color>
+    <color name="card_stroke">#33FFFFFF</color>
+    <color name="banner_bg">#331B7F4B</color>
+    <color name="table_header_bg">#1AFFFFFF</color>
+    <color name="table_stroke">#26FFFFFF</color>
+    <color name="field_stroke">#33FFFFFF</color>
+</resources>
